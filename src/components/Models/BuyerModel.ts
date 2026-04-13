@@ -1,16 +1,15 @@
-import { IBuyer, FormErrors } from '../../types';
+import { IBuyer, FormErrors, TPayment } from '../../types';
 
 export class BuyerModel {
-    payment: string = '';
-    address: string = '';
-    email: string = '';
-    phone: string = '';
-    formErrors: FormErrors = {};
+    protected payment: TPayment | null = null;
+    protected address: string = '';
+    protected email: string = '';
+    protected phone: string = '';
 
-    setData(field: keyof IBuyer, value: string): void {
-        this[field] = value;
-    }
-
+    // Используем Object.assign для обхода ограничения TS при записи в защищенные поля по ключу.
+setField<K extends keyof IBuyer>(field: K, value: IBuyer[K]): void {
+    Object.assign(this, { [field]: value });
+}
     getData(): IBuyer {
         return {
             payment: this.payment,
@@ -21,11 +20,10 @@ export class BuyerModel {
     }
 
     clear(): void {
-        this.payment = '';
+        this.payment = null;
         this.address = '';
         this.email = '';
         this.phone = '';
-        this.formErrors = {};
     }
 
     validate(): FormErrors {
@@ -35,7 +33,6 @@ export class BuyerModel {
         if (!this.email) errors.email = 'Укажите email';
         if (!this.phone) errors.phone = 'Укажите телефон';
         
-        this.formErrors = errors;
         return errors;
     }
 }

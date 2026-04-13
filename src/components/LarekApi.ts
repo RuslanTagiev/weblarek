@@ -1,4 +1,4 @@
-import { IApi, IOrder, IOrderResult, IProduct, IProductList } from '../types';
+import { IApi, IOrder, IOrderResult, IProductList, IProduct } from '../types';
 
 export class LarekApi {
     private _api: IApi;
@@ -9,18 +9,15 @@ export class LarekApi {
         this.cdn = cdn;
     }
 
-    // Получение списка товаров
-    getProductList(): Promise<IProduct[]> {
-        return this._api.get<IProductList>('/product').then((data) =>
-            data.items.map((item) => ({
-                ...item,
-                image: this.cdn + item.image
-            }))
-        );
+    getProductList(): Promise<IProductList> {
+        return this._api.get<IProductList>('/product');
     }
 
-    // Отправка заказа
+    getProductItem(id: string): Promise<IProduct> {
+        return this._api.get<IProduct>(`/product/${id}`);
+    }
+
     orderProducts(order: IOrder): Promise<IOrderResult> {
-        return this._api.post<IOrderResult>('/order', order).then((data) => data);
+        return this._api.post<IOrderResult>('/order', order);
     }
 }

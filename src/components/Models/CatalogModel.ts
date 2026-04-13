@@ -1,26 +1,26 @@
 import { IProduct } from '../../types';
 
 export class CatalogModel {
-    protected _items: IProduct[] = [];
-    protected _preview: IProduct | null = null;
+    protected items: IProduct[] = [];
+    protected preview: IProduct | null = null;
 
     setItems(items: IProduct[]): void {
-        this._items = items;
+        this.items = items;
     }
 
     getItems(): IProduct[] {
-        return this._items;
+        return this.items;
     }
 
     getItem(id: string): IProduct | undefined {
-        return this._items.find((item) => item.id === id);
+        return this.items.find((item) => item.id === id);
     }
 
     setPreview(item: IProduct): void {
-        this._preview = item;
+        this.preview = item;
     }
 
     getPreview(): IProduct | null {
-        return this._preview;
+        return this.preview;
     }
 }

@@ -3,8 +3,12 @@ import { apiProducts } from './utils/data';
 import { CatalogModel } from './components/Models/CatalogModel';
 import { BasketModel } from './components/Models/BasketModel';
 import { BuyerModel } from './components/Models/BuyerModel';
+import { Api } from './components/base/Api';
+import { LarekApi } from './components/LarekApi';
+import { API_URL, CDN_URL } from './utils/constants';
 
-// Проверка CatalogModel 
+// --- 1. ТЕСТИРОВАНИЕ МОДЕЛЕЙ (НА ТЕСТОВЫХ ДАННЫХ) ---
+
 const catalog = new CatalogModel();
 catalog.setItems(apiProducts.items);
 console.log('Массив товаров из каталога:', catalog.getItems());
@@ -15,8 +19,6 @@ console.log('Получение одного товара по id:', catalog.get
 catalog.setPreview(apiProducts.items[0]);
 console.log('Предпросмотр:', catalog.getPreview());
 
-
-// Проверка BasketModel 
 const basket = new BasketModel();
 const productBuy = apiProducts.items[0];
 
@@ -33,13 +35,9 @@ basket.addItem(productBuy);
 basket.clear();
 console.log('Пустая корзина:', basket.getItems());
 
-
-// Проверка BuyerModel 
 const buyer = new BuyerModel();
-
 buyer.setData('address', 'ул. ..., дом ...');
 console.log('Данные покупателя:', buyer.getData());
-
 console.log('Валидация данных покупателя (есть ошибки):', buyer.validate());
 
 buyer.setData('payment', 'online');
@@ -49,3 +47,25 @@ console.log('Валидация данных покупателя (нет оши
 
 buyer.clear();
 console.log('Покупатель: данные после очистки:', buyer.getData());
+
+
+// --- 2. ПОДКЛЮЧЕНИЕ СЕРВЕРА И ИТОГОВАЯ ПРОВЕРКА ---
+
+// Создаем экземпляр базового класса API
+const baseApi = new Api(API_URL);
+
+// Создаем экземпляр нашего класса коммуникации (композиция)
+const larekApi = new LarekApi(CDN_URL, baseApi);
+
+// Выполняем реальный запрос на сервер
+larekApi.getProductList()
+    .then((items) => {
+        // Наполняем ту же самую модель catalog реальными данными
+        catalog.setItems(items);
+
+        console.log('--- ИТОГ ПЕРВОЙ ЧАСТИ ---');
+        console.log('Каталог успешно наполнен данными с сервера:', catalog.getItems());
+    })
+    .catch((err) => {
+        console.error('Ошибка при загрузке данных с сервера:', err);
+    });

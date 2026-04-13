@@ -34,3 +34,15 @@ export interface IOrder extends IBuyer {
     total: number;
     items: string[];
 }
+
+// Тип для списка товаров
+export interface IProductList {
+    total: number;
+    items: IProduct[];
+}
+
+// Результат заказа
+export interface IOrderResult {
+    id: string;
+    total: number;
+}

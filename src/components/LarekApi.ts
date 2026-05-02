@@ -1,4 +1,4 @@
-import { IApi, IOrder, IOrderResult, IProductList, IProduct } from '../types';
+import { IApi, IOrder, IOrderResult, IProductList } from '../types';
 
 export class LarekApi {
     private _api: IApi;
@@ -11,10 +11,6 @@ export class LarekApi {
 
     getProductList(): Promise<IProductList> {
         return this._api.get<IProductList>('/product');
-    }
-
-    getProductItem(id: string): Promise<IProduct> {
-        return this._api.get<IProduct>(`/product/${id}`);
     }
 
     orderProducts(order: IOrder): Promise<IOrderResult> {

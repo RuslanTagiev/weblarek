@@ -8,17 +8,17 @@ export class BasketModel {
 
     addItem(item: IProduct): void {
         this.items.push(item);
-        this.events.emit('basket:changed', { items: this.items });
+        this.events.emit('basket:changed');
     }
 
     removeItem(id: string): void {
         this.items = this.items.filter(item => item.id !== id);
-        this.events.emit('basket:changed', { items: this.items });
+        this.events.emit('basket:changed'); 
     }
 
     clear(): void {
         this.items = [];
-        this.events.emit('basket:changed', { items: this.items });
+        this.events.emit('basket:changed');
     }
 
     getItems(): IProduct[] {

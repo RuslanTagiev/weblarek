@@ -1,26 +1,19 @@
-import { Component } from './base/Component';
-import { IEvents } from './base/Events';
-import { ensureElement } from '../utils/utils';
+import { Component } from "./base/Component";
+import { IEvents } from "./base/Events";
+import { ensureElement } from "./../utils/utils";
 
-interface IPage {
+interface HeaderData {
     counter: number;
-    catalog: HTMLElement[];
-    locked: boolean;
 }
 
-export class Page extends Component<IPage> {
-    protected counterElement: HTMLElement;
-    protected catalogElement: HTMLElement;
-    protected wrapperElement: HTMLElement;
+export class Header extends Component<HeaderData> {
     protected basketButton: HTMLButtonElement;
+    protected counterElement: HTMLElement;
 
-    constructor(container: HTMLElement, protected events: IEvents) {
+    constructor(protected events: IEvents, container: HTMLElement) {
         super(container);
-
-        this.counterElement = ensureElement<HTMLElement>('.header__basket-counter');
-        this.catalogElement = ensureElement<HTMLElement>('.gallery');
-        this.wrapperElement = ensureElement<HTMLElement>('.page__wrapper');
-        this.basketButton = ensureElement<HTMLButtonElement>('.header__basket');
+        this.counterElement = ensureElement<HTMLElement>('.header__basket-counter', container);
+        this.basketButton = ensureElement<HTMLButtonElement>('.header__basket', container);
 
         this.basketButton.addEventListener('click', () => {
             this.events.emit('basket:open');
@@ -28,18 +21,23 @@ export class Page extends Component<IPage> {
     }
 
     set counter(value: number) {
-        this.setText(this.counterElement, String(value));
+        this.counterElement.textContent = String(value);
+    }
+}
+
+interface GalleryData {
+    catalog: HTMLElement[];
+}
+
+export class Gallery extends Component<GalleryData> {
+    protected catalogElement: HTMLElement; 
+
+    constructor(container: HTMLElement) {
+        super(container);
+        this.catalogElement = ensureElement<HTMLElement>('.gallery', container);
     }
 
     set catalog(items: HTMLElement[]) {
         this.catalogElement.replaceChildren(...items);
-    }
-
-    set locked(value: boolean) {
-        if (value) {
-            this.wrapperElement.classList.add('page__wrapper_locked');
-        } else {
-            this.wrapperElement.classList.remove('page__wrapper_locked');
-        }
     }
 }

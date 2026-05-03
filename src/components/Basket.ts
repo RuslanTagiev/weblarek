@@ -2,9 +2,11 @@ import { Component } from './base/Component';
 import { IEvents } from './base/Events';
 import { ensureElement } from '../utils/utils';
 
+// 1. Добавляем valid в интерфейс
 interface IBasketView {
     items: HTMLElement[];
     total: number;
+    valid: boolean; 
 }
 
 export class Basket extends Component<IBasketView> {
@@ -26,18 +28,16 @@ export class Basket extends Component<IBasketView> {
         this.items = [];
     }
 
-    set items(items: HTMLElement[]) {
-        if (items.length > 0) {
-            this.listElement.replaceChildren(...items);
-            this.setDisabled(this.buttonElement, false);
-        } else {
-            const message = document.createElement('p');
-            this.setText(message, 'Корзина пуста');
-            this.listElement.replaceChildren(message);
-            this.setDisabled(this.buttonElement, true);
-        }
+    // 2. Добавляем сеттер valid
+    set valid(value: boolean) {
+        this.buttonElement.disabled = !value;
     }
+
+    set items(items: HTMLElement[]) {
+        this.listElement.replaceChildren(...items);
+    }
+
     set total(total: number) {
-        this.setText(this.totalElement, `${total} синапсов`);
+        this.totalElement.textContent = `${total} синапсов`; 
     }
 }

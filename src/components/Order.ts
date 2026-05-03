@@ -1,7 +1,7 @@
-import { Form } from '../components/Form';
-import { IBuyer } from '../types';
-import { IEvents } from './base/Events';
-import { ensureElement } from '../utils/utils';
+import { Form } from "./Form";
+import { IBuyer } from "./../types";
+import { IEvents } from "./base/Events";
+import { ensureElement } from "./../utils/utils";
 
 export class Order extends Form<IBuyer> {
     protected cardButton: HTMLButtonElement;
@@ -14,22 +14,24 @@ export class Order extends Form<IBuyer> {
         this.cashButton = ensureElement<HTMLButtonElement>('button[name="cash"]', container);
 
         this.cardButton.addEventListener('click', () => {
-            this.payment = 'online';
-            this.onInputChange('payment', 'online');
+            this.onInputChange('payment', 'card');
         });
 
         this.cashButton.addEventListener('click', () => {
-            this.payment = 'cash';
             this.onInputChange('payment', 'cash');
         });
     }
 
+    // Этот сеттер вызывается презентером ТОЛЬКО когда данные в модели обновились
     set payment(value: string) {
-        this.cardButton.classList.toggle('button_alt-active', value === 'online');
+        this.cardButton.classList.toggle('button_alt-active', value === 'card');
         this.cashButton.classList.toggle('button_alt-active', value === 'cash');
     }
 
     set address(value: string) {
-        (this.container.elements.namedItem('address') as HTMLInputElement).value = value;
+        const input = this.container.elements.namedItem('address') as HTMLInputElement;
+        if (input) {
+            input.value = value;
+        }
     }
 }

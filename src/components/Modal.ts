@@ -3,13 +3,13 @@ import { IEvents } from './base/Events';
 import { ensureElement } from '../utils/utils';
 
 interface IModalData {
-    content: HTMLElement | null;
+    content?: HTMLElement | null;
 }
 
 export class Modal extends Component<IModalData> {
-    // Используем понятные имена без подчеркиваний
     protected closeButton: HTMLButtonElement;
     protected contentElement: HTMLElement;
+    protected _active: boolean = false;
 
     constructor(container: HTMLElement, protected events: IEvents) {
         super(container);
@@ -17,32 +17,34 @@ export class Modal extends Component<IModalData> {
         this.closeButton = ensureElement<HTMLButtonElement>('.modal__close', container);
         this.contentElement = ensureElement<HTMLElement>('.modal__content', container);
 
-        // Привязываем события
         this.closeButton.addEventListener('click', this.close.bind(this));
         this.container.addEventListener('click', this.close.bind(this));
-        
-        // Клик внутри контента не должен закрывать модалку
         this.contentElement.addEventListener('click', (event) => event.stopPropagation());
     }
 
-    // Сеттер для вставки контента
+    // Геттер для проверки состояния окна из Презентера
+    get active() {
+        return this._active;
+    }
+
     set content(value: HTMLElement | null) {
-        if (value) {
-            this.contentElement.replaceChildren(value);
-        } else {
-            this.contentElement.innerHTML = '';
-        }
+        // Используем оператор нулевого слияния для очистки контента
+        this.contentElement.replaceChildren(value ?? '');
     }
 
     open() {
         this.container.classList.add('modal_active');
-        this.events.emit('modal:open');
+        this._active = true;
+        // Блокируем скролл страницы напрямую
+        document.body.classList.add('page__wrapper_locked');
     }
 
     close() {
         this.container.classList.remove('modal_active');
-        this.content = null; // Очищаем через сеттер
-        this.events.emit('modal:close');
+        this.content = null; 
+        this._active = false;
+        // Разблокируем скролл страницы напрямую
+        document.body.classList.remove('page__wrapper_locked');
     }
 
     render(data: IModalData): HTMLElement {

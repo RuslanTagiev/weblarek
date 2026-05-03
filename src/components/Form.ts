@@ -7,15 +7,15 @@ interface IFormState {
     errors: string[];
 }
 
-export class Form<T> extends Component<IFormState> {
-    protected submitButton: HTMLButtonElement;
-    protected errorsContainer: HTMLElement;
+export class Form<T> extends Component<IFormState & T> {
+    protected _submitButton: HTMLButtonElement;
+    protected _errorsContainer: HTMLElement;
 
     constructor(protected container: HTMLFormElement, protected events: IEvents) {
         super(container);
 
-        this.submitButton = ensureElement<HTMLButtonElement>('button[type="submit"]', this.container);
-        this.errorsContainer = ensureElement<HTMLElement>('.form__errors', this.container);
+        this._submitButton = ensureElement<HTMLButtonElement>('button[type="submit"]', this.container);
+        this._errorsContainer = ensureElement<HTMLElement>('.form__errors', this.container);
 
         this.container.addEventListener('input', (e: Event) => {
             const target = e.target as HTMLInputElement;
@@ -38,24 +38,10 @@ export class Form<T> extends Component<IFormState> {
     }
 
     set valid(value: boolean) {
-        this.setDisabled(this.submitButton, !value);
+        this._submitButton.disabled = !value;
     }
 
-    set errors(value: string) {
-        this.setText(this.errorsContainer, value);
-    }
-
-    render(state: Partial<T> & IFormState) {
-        const { valid, errors, ...inputs } = state;
-        super.render({ valid, errors });
-        
-        Object.entries(inputs).forEach(([key, value]) => {
-            const input = this.container.elements.namedItem(key) as HTMLInputElement;
-            if (input) {
-                input.value = String(value ?? '');
-            }
-        });
-
-        return this.container;
+    set errors(value: string[]) {
+        this._errorsContainer.textContent = value.join('; ');
     }
 }

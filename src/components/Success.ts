@@ -10,21 +10,21 @@ interface ISuccessActions {
 }
 
 export class Success extends Component<ISuccess> {
-    protected closeButton: HTMLButtonElement;
-    protected totalElement: HTMLElement;
+    protected _close: HTMLElement;
+    protected _total: HTMLElement;
 
     constructor(container: HTMLElement, actions: ISuccessActions) {
         super(container);
 
-        this.closeButton = ensureElement<HTMLButtonElement>('.order-success__close', container);
-        this.totalElement = ensureElement<HTMLElement>('.order-success__description', container);
+        this._close = ensureElement<HTMLElement>('.order-success__close', container);
+        this._total = ensureElement<HTMLElement>('.order-success__description', container);
 
         if (actions?.onClick) {
-            this.closeButton.addEventListener('click', actions.onClick);
+            this._close.addEventListener('click', actions.onClick);
         }
     }
 
     set total(value: number) {
-        this.setText(this.totalElement, `Списано ${value} синапсов`);
+        this._total.textContent = `Списано ${value} синапсов`;
     }
 }
